@@ -1,7 +1,9 @@
+VROOT=`cat ${HOME}/.vlang/VROOT`
+
 all: clean elv
 
 elv:
-	~/v/compiler/v -o elv src/main.v
+	${VROOT}/v -o elv src/main.v
 	./elv
 
 clean:

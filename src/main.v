@@ -1,11 +1,9 @@
 /*
 elv
------
 size of name
 name of the file
 size of content
 content
------
 .....
 */
 
@@ -17,10 +15,10 @@ const (
 	Mag = 'elv'
 )
 
-struct AFile {
+/*struct AFile {
 	name string
 	content string
-}
+}*/
 
 fn main() {
 	if os.args.len < 3 || os.args[1].len != 1 {
@@ -28,17 +26,22 @@ fn main() {
 		println('usage: $execname <alx> <ARCHIVE_NAME.elv> [FILE...]')
 	} else if os.args[1] == 'l' {
 		println('listing')
+		// TODO
 	} else if os.args[1] == 'a' {
 		println('archiving')
 		if os.args.len > 3 {
-			files := os.args.right(3)
-			arc := os.create(os.args[2])
-			arc.appendln(Mag)
+			files := os.args.right(3)    // get files to archive
+			arc := os.create(os.args[2]) // create new archive
+			arc.write(Mag) // write magic number
 			for file in files {
-				arc.write_byte(file.len, 4)
-				arc.appendln(file)
-				arc.write_byte(os.file_size(file), 8)
-				arc.appendln(os.read_file(file))
+				arc.write_bytes(file.len, 4) // size of file name
+				arc.write(file) // file name
+				arc.write_bytes(os.file_size(file), 8) // size of file
+				cont := os.read_file(file) or {  // read file content
+					panic('file does not exists')
+					return
+				}
+				arc.write(cont) // write content
 			}
 			arc.close()
 		} else {
@@ -48,5 +51,6 @@ fn main() {
 
 	} else if os.args[1] == 'x' {
 		println('extarcting')
+		// TODO
 	}
 }
