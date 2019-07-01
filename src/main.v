@@ -21,6 +21,10 @@ const (
 }*/
 
 fn main() {
+
+mut f_size:= 0
+mut filename_size := 0
+
 	if os.args.len < 3 || os.args[1].len != 1 {
 		execname := os.args[0]
 		println('usage: $execname <alx> <ARCHIVE_NAME.elv> [FILE...]')
@@ -34,9 +38,13 @@ fn main() {
 			arc := os.create(os.args[2]) // create new archive
 			arc.write(Mag) // write magic number
 			for file in files {
-				arc.write_bytes(file.len, 4) // size of file name
+				filename_size = file.len
+                println('"${filename_size}"')
+				arc.write_bytes(&filename_size, 4) // size of file name
 				arc.write(file) // file name
-				arc.write_bytes(os.file_size(file), 8) // size of file
+                f_size = os.file_size(file)
+                println('"${f_size}"')
+				arc.write_bytes(&f_size, 4) // size of file
 				cont := os.read_file(file) or {  // read file content
 					panic('file does not exists')
 					return
